@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<h2>The Page Generated An Error</h2>
+<div class="alert alert-danger">
+
+    <p>Please Click back and try again. If the error persists please contact support.</p>
+    <p>The error has not yet been logged and reads: "{{error}}"</p>
+</div>
+
+</div>
+
+
+{% endblock %}

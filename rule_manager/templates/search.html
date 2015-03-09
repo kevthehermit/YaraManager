@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Rule Manager{% endblock %}
+
+
+{% block content %}
+<!-- Search Bar -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Search Rules</h3>
+    </div>
+    <div class="panel-body">
+<form class="form-inline" role="form" action="/search/" enctype="multipart/form-data" method="post" name="search" target="_self">
+  <div class="form-group">
+      <select class="form-control" name="search_type">
+        <option value="name">Name</option>
+        <option value="description">Description</option>
+        <option value="string">String</option>
+        <option value="meta">Meta Data</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="term">Search Term</label>
+    <input type="text" class="form-control" name="search_word" id="search_word" placeholder="Search Term">
+    {% csrf_token %}
+  </div>
+  <button type="submit" class="btn btn-default">Search</button>
+
+</form>
+
+</div>
+</div>
+
+<!-- List Results -->
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Search for: <strong><span class="text-success">'{{search.term}}' </span></strong> Returned <strong><span class="text-success">{{search.count}}</span></strong> Results</h3>
+    </div>
+
+    <table class="table table-striped table-bordered table-hover">
+        <tr>
+            <th>#</th>
+            <th>Rule</th>
+            <th>Category</th>
+            <th>Source</th>
+            <th>Version</th>
+            <th>State</th>
+        </tr>
+        {% for row in results %}
+        {% if row.state == 0 %}
+        <tr class="success">
+        {% elif row.state == 1 %}
+        <tr class="danger">
+        {% else %}
+        <tr>
+        {% endif %}
+
+            <td>{{row.id}}</td>
+            <td><a href="/rule/{{row.id}}">{{row.rule_name}}</a></td>
+            <td>{{row.rule_category}}</td>
+            <td>{{row.rule_source}}</td>
+            <td>{{row.rule_version}}</td>
+            <td>{{row.rule_active}}</td>
+        </tr>
+        {% endfor %}      
+    </table>
+</div>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,31 @@
+Installation
+
+Pre-Reqs
+
+django
+yara
+yara-python
+
+pip install django-admin-bootstrapped
+
+DataBase
+
+The default is to use a sqlite file
+
+To use another database engine modify settings.py and modify the database section accordingly
+
+git clone https://github.com/kevthehermit/YaraManager
+
+cd YaraManager
+
+./manage.py makemigrations rule_manager
+
+./manage.py migrate
+
+./manage.py createsuperuser
+
+# Username Must be in email address format e.g. username@domain.com It does not need to be valid.
+
+./manage.py runserver 
+
+./manage.py runserver 0.0.0.0:9191

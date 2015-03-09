@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Rule Manager{% endblock %}
+
+
+{% block content %}
+<!-- Search Bar -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Search Rules</h3>
+    </div>
+    <div class="panel-body">
+<form class="form-inline" role="form" action="/search/" enctype="multipart/form-data" method="post" name="search" target="_self">
+  <div class="form-group">
+      <select class="form-control" name="search_type">
+        <option value="name">Name</option>
+        <option value="description">Description</option>
+        <option value="string">String</option>
+        <option value="meta">Meta Data</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="term">Search Term</label>
+    <input type="text" class="form-control" name="search_word" id="search_word" placeholder="Search Term">
+    {% csrf_token %}
+  </div>
+  <button type="submit" class="btn btn-default">Search</button>
+
+</form>
+
+</div>
+</div>
+
+<!-- Search Bar -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Upload Rules</h3>
+    </div>
+    <div class="panel-body">
+<form class="form-inline" role="form" action="/update/addfile/" enctype="multipart/form-data" method="post" name="rule_file" target="_self">
+    <input type="file" class="filestyle" data-buttonBefore="true" name="rule_file">
+    <input type="text" class="form-control" name="Category" id="Category" placeholder="Category">
+    <input type="text" class="form-control" name="Source" id="Source" placeholder="Source">
+{% csrf_token %}
+  <input type="hidden" name="action" value="new">
+  <button type="submit" class="btn btn-default">Upload</button>
+
+</form>
+
+</div>
+</div>
+<!-- List Rules -->
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Showing {{ rules.0 }} to {{ rules.1 }} of {{ rule_count }} Rules - Pass: <strong>2</strong> | <span class="text-success">Fail: <strong>3</strong> | <span class="text-danger">Active: <strong>1</strong></h3>
+    </div>
+
+    <table class="table table-striped table-bordered table-hover">
+        <tr>
+            <th>#</th>
+            <th>Rule</th>
+            <th>Category</th>
+            <th>Source</th>
+            <th>Version</th>
+            <th>State</th>
+        </tr>
+        {% for row in rule_list %}
+        {% if row.state == 0 %}
+        <tr class="success">
+        {% elif row.state == 1 %}
+        <tr class="danger">
+        {% else %}
+        <tr>
+        {% endif %}
+
+            <td>{{row.id}}</td>
+            <td><a href="/rule/{{row.id}}">{{row.rule_name}}</a></td>
+            <td>{{row.rule_category}}</td>
+            <td>{{row.rule_source}}</td>
+            <td>{{row.rule_version}}</td>
+            <td>{{row.rule_active}}</td>
+        </tr>
+        {% endfor %}      
+    </table>
+</div>
+
+
+<div class="text-center">
+    <nav>
+        <ul class="pagination">
+            {% if rule_list.has_previous %}
+            <li><a href="?page={{ rule_list.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span><span aria-hidden="true">&laquo;</span></span></li>    
+            {% endif %}
+
+            {% for page in rule_list.paginator.page_range %}
+            {% spaceless %}
+            <li
+            {% if page == rule_list.number %}
+            class="active"
+            {% endif %}
+            ><a href="?page={{ page }}">{{ page }}</a></li>
+            {% endspaceless %}
+            {% endfor %}
+
+            {% if rule_list.has_next %}
+            <li><a href="?page={{ rule_list.next_page_number }}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span><span aria-hidden="true">&raquo;</span></span></li>    
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+
+{% endblock %}

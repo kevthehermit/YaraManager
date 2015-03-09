@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Rule ID: {% endblock %}
+
+
+{% block content %}
+
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <th>Rule Name</th>
+                    <td>{{ rule_details.rule_name }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ rule_details.rule_description }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ rule_details.rule_category }}</td>
+                </tr>
+
+                <tr>
+                    <th>Revision</th>
+                    <td>{{ rule_details.rule_version }}</td>
+                </tr>
+                <tr>
+                    <th>Created</th>
+                    <td>{{ rule_details.rule_created }}</td>
+                </tr>
+                <tr>
+                    <th>State</th>
+                    <td>{{ rule_details.rule_state }}</td>
+                </tr>     
+                <tr>
+                    <th>Active</th>
+                    <td>{{ rule_details.rule_active }}</td>
+                </tr>
+        </table>
+    </div>
+
+
+</div>
+
+            
+            
+<form role="form" action="/update/rule/" enctype="multipart/form-data" method="post">
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">MetaData</h3>
+    </div>
+    <div class="panel-body">      
+        <div class="form-group" name="metaForm" id="metaForm">
+        {% for meta in meta_list %}
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="hidden" name="meta_id" value="{{meta.id}}" />
+                    <input type="text" class="form-control" name="metaKeys" value="{{meta.meta_key}}">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="metaValues" value="{{meta.meta_value}}">
+                </div>
+				<a class="btn text-danger" onclick="$(this).parent('div').remove();"><i class="glyphicon glyphicon-trash"></i></a>
+            </div>
+            <br/>
+        {% endfor %}
+        </div>
+    <button class="btn btn-sm" type="button" onClick="addInput('metaForm');">Add Field</button>
+
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Strings</h3>
+    </div>
+    <div class="panel-body">      
+        <div class="form-group" name="stringsForm" id="stringsForm">
+            {% for string in string_list %}
+            <div class="row" name="row_{{string.id}}">
+                <div class ="col-md-1">
+                    <select class="form-control" name="type">
+                        {% for choice in string_types %}
+                        <option value = "{{choice}}"{% if string.string_type == choice %}selected="selected"{% endif %}>{{choice}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <input type="hidden" name="string_id" value="{{string.id}}" />
+                    <input type="text" class="form-control" name="stringName" value="{{string.string_name}}">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="stringValues" value="{{string.string_value|safe}}">
+                </div>
+                
+                {% if string.string_nocase %}
+                <input type="checkbox" checked="{{string.string_nocase}}">  nocase
+                <input type="hidden" name="caseValues" value="1" />                
+                {% else %}
+                <input type="checkbox" >  nocase 
+                <input type="hidden" name="caseValues" value="0" />
+                {% endif %}
+
+                {% if string.string_wide %}
+                <input type="checkbox" checked="{{string.string_wide}}">  wide
+                <input type="hidden" name="wideValues" value="1"/>
+                {% else %}
+                <input type="checkbox" >  wide
+                <input type="hidden" name="wideValues" value="0"/>                
+                {% endif %}
+
+                {% if string.string_full %}
+                <input type="checkbox" checked="{{string.string_full}}">  fullword 
+                <input type="hidden" name="fullValues" value="1" />
+                {% else %}
+                <input type="checkbox" >  fullword 
+                <input type="hidden" name="fullValues" value="0" />
+                {% endif %}
+
+                {% if string.string_ascii %}
+                <input type="checkbox" checked="{{string.string_ascii}}">  ascii 
+                <input type="hidden" name="asciiValues" value="1" />
+                {% else %}
+                <input type="checkbox" >  ascii 
+                <input type="hidden" name="asciiValues" value="0" />
+                {% endif %}
+				<a class="btn text-danger" onclick="$(this).parent('div').remove();"><i class="glyphicon glyphicon-trash"></i></a>
+            </div>
+            <br/>
+            {% endfor %}   
+            
+        </div>
+    <button class="btn btn-sm" type="button" onClick="addInput('stringsForm');">Add Field</button>
+
+    </div>
+</div>
+
+<script>
+$('input[type="checkbox"]').on('change', function(e){
+        if($(this).prop('checked'))
+        {
+            $(this).next().val(1);
+        } else {
+            $(this).next().val(0);
+        }
+});
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Condition</h3>
+    </div>
+    <div class="panel-body">      
+        <div class="form-group" name="rule_condition" id="metaData">
+                <input type="text" class="form-control" name="conditionValue" value= "{{condition.condition}}" placeholder="Condition">
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="rule_id" value="{{rule_details.id}}" />
+<button type="submit" class="btn btn-default" name="action" value="new">Submit</button>
+<button type="submit" class="btn btn-default btn-warning" name="action" value="update" >Update</button>
+<button type="submit" class="btn btn-default btn-danger" name="action" value="delete" onclick="return confirm('Are you sure you want to delete this rule?')">Delete</button>
+<a href="/export/rule/{{rule_details.id}}" class="btn btn-primary" role="button">Export Rule</a>
+{% csrf_token %}
+</form>
+
+<script>
+var counter = 1;
+var limit = 10;
+function addInput(divName){
+  var newdiv = document.createElement('div');
+
+  if (divName == "metaForm"){
+        newdiv.innerHTML = '<div class="row"> \
+        <div class="col-md-2"> \
+        <input type="hidden" name="meta_id" value="new" /> \
+        <input type="text" class="form-control" name="metaKeys" placeholder="Key"> \
+        </div> \
+        <div class="col-md-4"> \
+        <input type="text" class="form-control" name="metaValues" placeholder="Value"> \
+        </div> \
+        <a class="btn text-danger" onclick="$(this).parent(&apos;div&apos;).remove();"><i class="glyphicon glyphicon-trash"></i></a> \
+        </div><br/>';
+  }
+  if (divName == "stringsForm"){
+        newdiv.innerHTML = '            <div class="row"> \
+        <div class ="col-md-1"> \
+        <select class="form-control" name="type"> \
+        <option value = "String">String</option> \
+        <option value = "Hex">Hex</option> \
+        <option value = "RegEx">RegEx</option> \
+        </select> \
+        </div> \
+        <div class="col-md-2"> \
+        <input type="text" class="form-control" name="stringName" value="{{string.string_name}}"> \
+        </div> \
+        <div class="col-md-4"> \
+        <input type="text" class="form-control" name="stringValues" value="{{string.string_value}}"> \
+        </div> \
+        <input type="hidden" name="string_id" value="new" /> \
+        <input type="checkbox" >  nocase \
+        <input type="hidden" name="caseValues" value="0" /> \
+        <input type="checkbox">  wide  \
+        <input type="hidden" name="wideValues" value="0" /> \
+        <input type="checkbox">  fullword  \
+        <input type="hidden" name="fullValues" value="0" /> \
+        <input type="checkbox" >  ascii \
+        <input type="hidden" name="asciiValues" value="0" /> \
+        <a class="btn text-danger" onclick="$(this).parent(&apos;div&apos;).remove();"><i class=glyphicon glyphicon-trash"></i></a></div> <br/>';
+  }
+
+  document.getElementById(divName).appendChild(newdiv);
+
+}
+</script>
+
+{% endblock %}
