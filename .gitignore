@@ -55,3 +55,4 @@ target/
 
 secret_key.py
 YaraManager_Database
+rule_manager/migrations/
