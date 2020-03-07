@@ -81,7 +81,7 @@ def create_multi_rule(cat_name):
 def split_rules(rule_dict):
     print("Running Rules")
     raw_rules = rule_dict['rule_data']
-    rule_list = re.findall('rule.*?condition:.*?}', raw_rules.decode('utf8'), re.DOTALL)
+    rule_list = re.findall('rule .*?condition:.*?}', raw_rules.decode('utf8'), re.DOTALL)
     for rule in rule_list:
         process_rule(rule, rule_dict)
 
