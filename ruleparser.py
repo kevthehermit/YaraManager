@@ -100,7 +100,7 @@ def process_rule(single_rule, rule_dict):
     # MetaData
     meta_list = re.findall('meta:(.*)strings:', single_rule, re.DOTALL)
     if len(meta_list) > 0:
-        with transaction.commit_on_success():
+        with transaction.atomic():
             for line in meta_list[0].split('\n'):
                 if '=' in line:
                     meta_lines = line.split('=')
@@ -115,7 +115,7 @@ def process_rule(single_rule, rule_dict):
     # Strings
     string_list = re.findall('strings:(.*)condition:', single_rule, re.DOTALL)
     if len(string_list) > 0:
-        with transaction.commit_on_success():
+        with transaction.atomic():
             for line in string_list[0].split('\n'):
                 if '=' in line:
                     string_type = False
