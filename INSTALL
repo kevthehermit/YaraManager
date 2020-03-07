@@ -6,7 +6,8 @@ django
 yara
 yara-python
 
-pip install django-admin-bootstrapped
+apt-get install python3-django  yara-python
+pip3 install django-admin-bootstrapped
 
 DataBase
 
@@ -17,7 +18,12 @@ To use another database engine modify settings.py and modify the database sectio
 git clone https://github.com/kevthehermit/YaraManager
 
 cd YaraManager
+cd YaraManager
+cp settings.template.py settings.py
 
+Edit your hosts in settings.py (ALLOWED_HOSTS)
+
+cd ..
 ./manage.py makemigrations rule_manager
 
 ./manage.py migrate
@@ -28,4 +34,4 @@ cd YaraManager
 
 ./manage.py runserver 
 
-./manage.py runserver 0.0.0.0:9191
+./manage.py runserver 0.0.0.0:8080

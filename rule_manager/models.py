@@ -16,7 +16,8 @@ class Rule(models.Model):
     rule_edited = models.DateTimeField(default=timezone.now())
     rule_state = models.IntegerField(default=0)
     rule_active = models.BooleanField(default=True)
-    
+    rule_hash = models.CharField(max_length=64)
+
     def __str__(self):
         return self.rule_name
 
