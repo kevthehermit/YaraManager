@@ -15,7 +15,7 @@ The default is to use a sqlite file
 
 To use another database engine modify settings.py and modify the database section accordingly
 
-git clone https://github.com/kevthehermit/YaraManager
+git clone https://github.com/Th4nat0s/YaraManager
 
 cd YaraManager
 cd YaraManager
