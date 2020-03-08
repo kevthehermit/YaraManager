@@ -1,4 +1,5 @@
 import re
+import hashlib
 
 from django.db import transaction
 
@@ -89,12 +90,18 @@ def split_rules(rule_dict):
 def process_rule(single_rule, rule_dict):
     # Break a rule down in to sections
     new_rule = Rule()
-
+    # Unique hash body of rule
+    new_rule.rule_hash = hashlib.sha256(single_rule.encode('utf8')).hexdigest()
     new_rule.rule_name = single_rule.split('{')[0].replace('rule ', '')
     new_rule.rule_category = rule_dict['rule_category']
     new_rule.rule_source = rule_dict['rule_source']
     new_rule.rule_version = 1
-    new_rule.save()
+    # With integrity error avoid duplicate
+    try:
+        new_rule.save()
+    except:
+        # IntegrityError as e:
+        return()
     rule_id = new_rule.id
 
     # MetaData

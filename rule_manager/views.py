@@ -60,7 +60,7 @@ def index_view(request):
         page = 1
     page_count = request.GET.get('count')
     if not page_count:
-        page_count = 10
+        page_count = 100
     rule_list = Rule.objects.all()
     rule_count = rule_list.count
     first_rule =  int(page) * int(page_count) - int(page_count) + 1
