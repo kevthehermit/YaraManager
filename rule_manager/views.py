@@ -20,6 +20,13 @@ def get_categories():
     return cat_list
 
 
+def get_not_categories(rule_id):
+    cat_list = []
+    for name in Category.objects.all():
+        cat_list.append(name.cat_name)
+    return cat_list
+
+
 # Create your views here.
 
 # Login Page
@@ -110,6 +117,15 @@ def enable_rule(request, rule_id):
     ruleparser.Enable_Rule(rule_id)
     return redirect('/')
 
+def addtag(request, rule_id, cat_name):
+    ruleparser.Add_Tag(rule_id,cat_name)
+    return redirect(f'/rule/{rule_id}')
+
+def deltag(request, rule_id, cat_name):
+    ruleparser.Del_Tag(rule_id,cat_name)
+    return redirect(f'/rule/{rule_id}')
+
+
 # Export
 # this should return a valid yara rule as a .yar
 def export_rule(request, rule_id):
@@ -138,7 +154,10 @@ def rule_view(request, rule_id):
         # get condition
         condition = rule_details.condition_set.all()[0]
 
-        return render(request, 'rule.html', {'rule_details': rule_details, 'meta_list':meta_list, 'string_list': string_list, 'condition': condition, 'string_types':['String', 'Hex', 'RegEx']})
+
+        cat_list = get_not_categories(rule_id)
+
+        return render(request, 'rule.html', {'rule_details': rule_details, 'meta_list':meta_list, 'string_list': string_list, 'condition': condition, 'string_types':['String', 'Hex', 'RegEx'], 'cat_list':cat_list})
     except Exception as e:
         return render(request, 'error.html', {'error': e})
 

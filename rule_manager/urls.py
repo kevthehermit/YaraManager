@@ -25,6 +25,10 @@ urlpatterns = patterns('',
     url(r'^disable/(?P<rule_id>\d+)/$', views.disable_rule, name='disable'), 
     url(r'^enable/(?P<rule_id>\d+)/$', views.enable_rule, name='enable'), 
 
+    # Disable / enable  rule
+    url(r'^addtag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.addtag, name='addtag'), 
+    url(r'^deltag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.deltag, name='deltag'), 
+
     # Export Rules
     # Single
     url(r'^export/rule/(?P<rule_id>\d+)/$', views.export_rule, name='export_rule'),

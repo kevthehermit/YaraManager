@@ -70,7 +70,9 @@ def create_multi_rule(cat_name):
     final_rule = ''
 
     # Get rules ids for cat name
-    rules = Rule.objects.filter(rule_category=cat_name)
+
+    cat = Category.objects.filter(cat_name=cat_name).first()
+    rules = Rule.objects.filter(rule_category=cat.id)
     for rule in rules:
         name, raw = create_single_rule(rule.id)
         if rule.rule_active:
@@ -95,6 +97,20 @@ def Disable_Rule(rule_id):
 def Enable_Rule(rule_id):
     rule_details = Rule.objects.get(id=rule_id)
     rule_details.rule_active = True
+    rule_details.save()
+
+
+def Add_Tag(rule_id, cat_name):
+    rule_details = Rule.objects.get(id=rule_id)
+    cat = Category.objects.filter(cat_name=cat_name).first()
+    rule_details.rule_category.add(cat)
+    rule_details.save()
+
+
+def Del_Tag(rule_id, cat_name):
+    rule_details = Rule.objects.get(id=rule_id)
+    cat = Category.objects.filter(cat_name=cat_name).first()
+    rule_details.rule_category.remove(cat)
     rule_details.save()
 
 
