@@ -22,8 +22,16 @@ def get_categories():
 
 def get_not_categories(rule_id):
     cat_list = []
+    rule = Rule.objects.get(id=rule_id)
+
     for name in Category.objects.all():
-        cat_list.append(name.cat_name)
+        gotit = True
+        for cat_id in rule.rule_category.all():
+            if cat_id.id == name.id:
+                gotit = False
+                break
+        if gotit:
+            cat_list.append(name.cat_name)
     return cat_list
 
 
