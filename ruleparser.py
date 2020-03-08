@@ -73,7 +73,8 @@ def create_multi_rule(cat_name):
     rules = Rule.objects.filter(rule_category=cat_name)
     for rule in rules:
         name, raw = create_single_rule(rule.id)
-        final_rule += '{0}'.format(raw)
+        if rule.rule_active:
+            final_rule += '{0}'.format(raw)
 
     return cat_name, final_rule
 
@@ -85,6 +86,16 @@ def split_rules(rule_dict):
     rule_list = re.findall('rule .*?condition:.*?}', raw_rules.decode('utf8','ignore'), re.DOTALL)
     for rule in rule_list:
         process_rule(rule, rule_dict)
+
+def Disable_Rule(rule_id):
+    rule_details = Rule.objects.get(id=rule_id)
+    rule_details.rule_active = False
+    rule_details.save()
+
+def Enable_Rule(rule_id):
+    rule_details = Rule.objects.get(id=rule_id)
+    rule_details.rule_active = True
+    rule_details.save()
 
 
 def process_rule(single_rule, rule_dict):

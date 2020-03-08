@@ -21,6 +21,10 @@ urlpatterns = patterns('',
     # Post Data Pages
     url(r'^update/(?P<add_type>.+)/$', views.post_data, name='post_data'), 
 
+    # Disable / enable  rule
+    url(r'^disable/(?P<rule_id>\d+)/$', views.disable_rule, name='disable'), 
+    url(r'^enable/(?P<rule_id>\d+)/$', views.enable_rule, name='enable'), 
+
     # Export Rules
     # Single
     url(r'^export/rule/(?P<rule_id>\d+)/$', views.export_rule, name='export_rule'),

@@ -79,7 +79,14 @@
             <td>{{row.rule_category}}</td>
             <td>{{row.rule_source}}</td>
             <td>{{row.rule_version}}</td>
-            <td>{{row.rule_active}}</td>
+            <td>{% if row.rule_active %}
+             <a href="/disable/{{row.id}}"><button type="button" role="button" class="btn btn-primary">Active</button></a>
+             {% else %}
+             <a href="/enable/{{row.id}}">
+              <button type="button" class="btn btn-outline-warning">Disabled</button>
+              </a>
+              {%endif%}
+             </td>
         </tr>
         {% endfor %}      
     </table>

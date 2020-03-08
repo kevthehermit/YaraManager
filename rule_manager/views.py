@@ -102,6 +102,14 @@ def search(request):
     return render(request, 'search.html', {'results':results, 'search':{'term':search_word, 'count':len(results)}})
 
 
+def disable_rule(request, rule_id):
+    ruleparser.Disable_Rule(rule_id)
+    return redirect('/')
+
+def enable_rule(request, rule_id):
+    ruleparser.Enable_Rule(rule_id)
+    return redirect('/')
+
 # Export
 # this should return a valid yara rule as a .yar
 def export_rule(request, rule_id):
