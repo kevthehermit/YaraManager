@@ -9,7 +9,7 @@ class Category(models.Model):
 class Rule(models.Model):
     rule_name = models.CharField(max_length=200)
     rule_description = models.CharField(max_length=200, null=True, blank=True)
-    rule_category = models.CharField(max_length=200, null=True, blank=True)
+#   rule_category = models.CharField(max_length=200, null=True, blank=True)
     rule_source = models.CharField(max_length=200, null=True, blank=True)
     rule_version = models.IntegerField(default=0)
     rule_created = models.DateTimeField(default=timezone.now())
@@ -17,6 +17,7 @@ class Rule(models.Model):
     rule_state = models.IntegerField(default=0)
     rule_active = models.BooleanField(default=True)
     rule_hash = models.CharField(max_length=64, unique=True)
+    rule_category = models.ManyToManyField(Category)
 
     def __str__(self):
         return self.rule_name

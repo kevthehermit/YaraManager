@@ -99,19 +99,35 @@ def Enable_Rule(rule_id):
 
 
 def process_rule(single_rule, rule_dict):
+    # Store the category
+    cat_list = []
+    # Retrieve all categories
+    for name in Category.objects.all():
+        cat_list.append(name.cat_name)
+    
+    # If the catergori is not in the list , save it.
+    if rule_dict['rule_category'] not in cat_list:
+        cat = Category(cat_name=rule_dict['rule_category'])
+        cat.save()
+    else:
+        cat = Category.objects.filter(cat_name=rule_dict['rule_category']).first()
+
     # Break a rule down in to sections
     new_rule = Rule()
     # Unique hash body of rule
     new_rule.rule_hash = hashlib.sha256(single_rule.encode('utf8')).hexdigest()
     new_rule.rule_name = single_rule.split('{')[0].replace('rule ', '')
-    new_rule.rule_category = rule_dict['rule_category']
+    # new_rule.rule_category = Category(cat_name=rule_dict['rule_category'])
+    # new_rule.rule_category.add(cat)
     new_rule.rule_source = rule_dict['rule_source']
     new_rule.rule_version = 1
+
     # With integrity error avoid duplicate
     try:
         new_rule.save()
+        new_rule.rule_category.add(cat)
     except:
-        # IntegrityError as e:
+    # IntegrityError as e:
         return()
     rule_id = new_rule.id
 
@@ -193,10 +209,11 @@ def process_rule(single_rule, rule_dict):
     cond_string.save()
 
     # Store the category
-
+    '''
     cat_list = []
     for name in Category.objects.all():
         cat_list.append(name.cat_name)
     if rule_dict['rule_category'] not in cat_list:
         cat = Category(cat_name=rule_dict['rule_category'])
         cat.save()
+    '''

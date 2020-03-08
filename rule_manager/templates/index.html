@@ -76,9 +76,15 @@
 
             <td>{{row.id}}</td>
             <td><a href="/rule/{{row.id}}">{{row.rule_name}}</a></td>
-            <td>{{row.rule_category}}</td>
+            <td>
+             {% for cat in row.rule_category.all %}
+             <span class="badge badge-success">
+            {{cat.cat_name}}</span>
+            {% endfor %}
+            </td>
             <td>{{row.rule_source}}</td>
-            <td>{{row.rule_version}}</td>
+            <td>{{row.rule_version}}
+            </td>
             <td>{% if row.rule_active %}
              <a href="/disable/{{row.id}}"><button type="button" role="button" class="btn btn-primary">Active</button></a>
              {% else %}
