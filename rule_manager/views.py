@@ -14,6 +14,7 @@ import ruleparser
 
 
 def get_categories():
+    ''' Retrieve All Categories '''
     cat_list = []
     for name in Category.objects.all():
         cat_list.append(name.cat_name)
@@ -21,6 +22,7 @@ def get_categories():
 
 
 def get_not_categories(rule_id):
+    ''' Retrieve All Categories that a rule is not tagged into '''
     cat_list = []
     rule = Rule.objects.get(id=rule_id)
 
@@ -89,6 +91,11 @@ def index_view(request):
     except EmptyPage:
         rules = paginator.page(paginator.num_pages)
     return render(request, 'index.html', {'cat_list':cat_list, 'rule_list': rules, 'rule_count':rule_count, 'rules':[first_rule, last_rule]})
+
+
+def tags(request):
+    cat_list = Category.objects.all()
+    return render(request, 'tags.html', {'cat_list':cat_list})
 
 
 # Search
@@ -185,6 +192,13 @@ def post_data(request, add_type):
 
     # Get all the POST Vars
     action = request.POST['action']
+
+
+    # Add a Tag
+    if add_type == 'addtag':
+        # pprint.pprint(request.POST['Description'])
+        ruleparser.AddNew_Tag(request.POST['Category'])
+        return redirect('/tags')
 
     if add_type == 'rule':
         rule_id = request.POST['rule_id']

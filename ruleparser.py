@@ -114,19 +114,23 @@ def Del_Tag(rule_id, cat_name):
     rule_details.save()
 
 
-def process_rule(single_rule, rule_dict):
-    # Store the category
+def AddNew_Tag(cat_name):
     cat_list = []
-    # Retrieve all categories
     for name in Category.objects.all():
         cat_list.append(name.cat_name)
     
     # If the catergori is not in the list , save it.
-    if rule_dict['rule_category'] not in cat_list:
-        cat = Category(cat_name=rule_dict['rule_category'])
+    if cat_name not in cat_list:
+        cat = Category(cat_name=cat_name)
         cat.save()
     else:
-        cat = Category.objects.filter(cat_name=rule_dict['rule_category']).first()
+        cat = Category.objects.filter(cat_name=cat_name).first()
+    return(cat)
+
+
+def process_rule(single_rule, rule_dict):
+    cat = AddNew_Tag(rule_dict['rule_category'])
+    # Store the category
 
     # Break a rule down in to sections
     new_rule = Rule()

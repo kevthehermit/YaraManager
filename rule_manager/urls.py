@@ -17,17 +17,20 @@ urlpatterns = patterns('',
 
     # Search
     url(r'^search/', views.search, name='search'),
-    
+
+    # Search
+    url(r'^tags/', views.tags, name='tags'),
+
     # Post Data Pages
-    url(r'^update/(?P<add_type>.+)/$', views.post_data, name='post_data'), 
+    url(r'^update/(?P<add_type>.+)/$', views.post_data, name='post_data'),
 
     # Disable / enable  rule
-    url(r'^disable/(?P<rule_id>\d+)/$', views.disable_rule, name='disable'), 
-    url(r'^enable/(?P<rule_id>\d+)/$', views.enable_rule, name='enable'), 
+    url(r'^disable/(?P<rule_id>\d+)/$', views.disable_rule, name='disable'),
+    url(r'^enable/(?P<rule_id>\d+)/$', views.enable_rule, name='enable'),
 
     # Disable / enable  rule
-    url(r'^addtag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.addtag, name='addtag'), 
-    url(r'^deltag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.deltag, name='deltag'), 
+    url(r'^addtag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.addtag, name='addtag'),
+    url(r'^deltag/(?P<rule_id>\d+)/(?P<cat_name>.+)$', views.deltag, name='deltag'),
 
     # Export Rules
     # Single
