@@ -14,9 +14,26 @@ import ruleparser
 
 
 def get_categories():
+    ''' Retrieve All Categories '''
     cat_list = []
     for name in Category.objects.all():
         cat_list.append(name.cat_name)
+    return cat_list
+
+
+def get_not_categories(rule_id):
+    ''' Retrieve All Categories that a rule is not tagged into '''
+    cat_list = []
+    rule = Rule.objects.get(id=rule_id)
+
+    for name in Category.objects.all():
+        gotit = True
+        for cat_id in rule.rule_category.all():
+            if cat_id.id == name.id:
+                gotit = False
+                break
+        if gotit:
+            cat_list.append(name.cat_name)
     return cat_list
 
 
@@ -43,10 +60,12 @@ def login_page(request):
         error_line = "Unable to login to the Web Panel"
         return redirect('/')
 
+
 # Logout Page
 def logout_page(request):
     logout(request)
     return redirect('/')
+
 
 # Main Page
 def index_view(request):
@@ -58,7 +77,7 @@ def index_view(request):
         page = 1
     page_count = request.GET.get('count')
     if not page_count:
-        page_count = 10
+        page_count = 100
     rule_list = Rule.objects.all()
     rule_count = rule_list.count
     first_rule =  int(page) * int(page_count) - int(page_count) + 1
@@ -72,7 +91,13 @@ def index_view(request):
     except EmptyPage:
         rules = paginator.page(paginator.num_pages)
     return render(request, 'index.html', {'cat_list':cat_list, 'rule_list': rules, 'rule_count':rule_count, 'rules':[first_rule, last_rule]})
-    
+
+
+def tags(request):
+    cat_list = Category.objects.all()
+    return render(request, 'tags.html', {'cat_list':cat_list})
+
+
 # Search
 def search(request):
     try:
@@ -95,9 +120,27 @@ def search(request):
     else:
         error_line = "Not a valid Search"
         return render(request, 'error.html', {'error': error_line})
-            
+
     return render(request, 'search.html', {'results':results, 'search':{'term':search_word, 'count':len(results)}})
-    
+
+
+def disable_rule(request, rule_id):
+    ruleparser.Disable_Rule(rule_id)
+    return redirect('/')
+
+def enable_rule(request, rule_id):
+    ruleparser.Enable_Rule(rule_id)
+    return redirect('/')
+
+def addtag(request, rule_id, cat_name):
+    ruleparser.Add_Tag(rule_id,cat_name)
+    return redirect(f'/rule/{rule_id}')
+
+def deltag(request, rule_id, cat_name):
+    ruleparser.Del_Tag(rule_id,cat_name)
+    return redirect(f'/rule/{rule_id}')
+
+
 # Export
 # this should return a valid yara rule as a .yar
 def export_rule(request, rule_id):
@@ -105,13 +148,15 @@ def export_rule(request, rule_id):
     response = HttpResponse(rule_object, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="{0}.yar"'.format(rule_name)
     return response
-    
+
+
 def export_cat(request, cat_name):
     rule_name, rule_object = ruleparser.create_multi_rule(cat_name)
     response = HttpResponse(rule_object, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="{0}.yar"'.format(rule_name)
     return response
-    
+
+
 # Rules
 def rule_view(request, rule_id):
     try:
@@ -123,10 +168,15 @@ def rule_view(request, rule_id):
         string_list = rule_details.rulestrings_set.all()
         # get condition
         condition = rule_details.condition_set.all()[0]
-        
-        return render(request, 'rule.html', {'rule_details': rule_details, 'meta_list':meta_list, 'string_list': string_list, 'condition': condition, 'string_types':['String', 'Hex', 'RegEx']})
+
+
+        cat_list = get_not_categories(rule_id)
+
+        return render(request, 'rule.html', {'rule_details': rule_details, 'meta_list':meta_list, 'string_list': string_list, 'condition': condition, 'string_types':['String', 'Hex', 'RegEx'], 'cat_list':cat_list})
     except Exception as e:
         return render(request, 'error.html', {'error': e})
+
+
 # Update Rules with Post Data
 def post_data(request, add_type):
     """
@@ -142,13 +192,20 @@ def post_data(request, add_type):
 
     # Get all the POST Vars
     action = request.POST['action']
-    
+
+
+    # Add a Tag
+    if add_type == 'addtag':
+        # pprint.pprint(request.POST['Description'])
+        ruleparser.AddNew_Tag(request.POST['Category'])
+        return redirect('/tags')
+
     if add_type == 'rule':
         rule_id = request.POST['rule_id']
         if action == 'delete':
             Rule.objects.filter(id=rule_id).delete()
             return redirect('/')
-            
+
         if action == 'new':
             # need to get the rule details in to post before i look at this. 
             pass
@@ -160,12 +217,12 @@ def post_data(request, add_type):
         else:
             error_line = "Not a valid Action Type"
             return render(request, 'error.html', {'error': error_line})
-        
+
         #meta data
         meta_ids = request.POST.getlist('meta_id')
         meta_values = request.POST.getlist('metaValues')
         meta_keys = request.POST.getlist('metaKeys')
-        
+
         meta_save = []
         for i in range(len(meta_values)):
             if meta_ids[i] == 'new':
@@ -177,14 +234,14 @@ def post_data(request, add_type):
             meta_data.meta_value = meta_values[i]
             meta_data.save()
             meta_save.append(meta_data.id)
-        
+
         # Delete Rows
         meta_db = rule.metadata_set.all()
         for obj in meta_db:
             if obj.id not in meta_save:
-                print "dropping Meta with ID", obj.id
+                print(f"dropping Meta with ID{obj.id}")
                 MetaData.objects.filter(id=obj.id).delete()
-        
+
         # Strings
         string_ids = request.POST.getlist('string_id')
         string_names = request.POST.getlist('stringName')
@@ -193,7 +250,7 @@ def post_data(request, add_type):
         string_wides = request.POST.getlist('wideValues')
         string_fulls = request.POST.getlist('fullValues')
         string_asciis = request.POST.getlist('asciiValues')
-        
+
         # Collect the string vars
         string_save = []
         for i in range(len(string_names)):
@@ -216,11 +273,9 @@ def post_data(request, add_type):
         string_db = rule.rulestrings_set.all()
         for obj in string_db:
             if obj.id not in string_save:
-                print "dropping String with ID", obj.id
-                RuleStrings.objects.filter(id=obj.id).delete()            
-        
+                print(f"dropping String with ID{obj.id}")
+                RuleStrings.objects.filter(id=obj.id).delete()
         return redirect('/rule/{0}'.format(rule_id))
-    
 
     # Add Rules
     if add_type == 'addfile':
@@ -232,4 +287,3 @@ def post_data(request, add_type):
             rule_data = rule_file.read()
             ruleparser.split_rules({'rule_data':rule_data, 'rule_source':rule_source, 'rule_category':rule_category})
     return redirect('/')
-            

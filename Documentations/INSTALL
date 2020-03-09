@@ -1,4 +1,5 @@
-Installation
+Run Flawlessly on Ubuntu 18.4 with Python 3
+
 
 Pre-Reqs
 
@@ -6,26 +7,27 @@ django
 yara
 yara-python
 
-pip install django-admin-bootstrapped
+apt-get install python3-django yara-python
+pip3 install django-admin-bootstrapped
 
 DataBase
-
 The default is to use a sqlite file
-
 To use another database engine modify settings.py and modify the database section accordingly
 
-git clone https://github.com/kevthehermit/YaraManager
+git clone https://github.com/Th4nat0s/YaraManager
 
 cd YaraManager
+cd YaraManager
+cp settings.template.py settings.py
+Edit your hosts in settings.py (ALLOWED_HOSTS)
 
+cd ..
 ./manage.py makemigrations rule_manager
-
 ./manage.py migrate
-
 ./manage.py createsuperuser
 
 # Username Must be in email address format e.g. username@domain.com It does not need to be valid.
 
-./manage.py runserver 
+./manage.py runserver 0.0.0.0:8080
 
-./manage.py runserver 0.0.0.0:9191
+And surf on it.
