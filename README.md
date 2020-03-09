@@ -1,7 +1,7 @@
 # YaraManager
 Web based Manager for Yara Rules  
 
-(c) 2020 Thanat0s back to life. 
+(c) 2020 Thanat0s back to life.  
 (c) 2015 KevTheHermit Initial Work.
 
 Original Code : https://github.com/kevthehermit/YaraManager
